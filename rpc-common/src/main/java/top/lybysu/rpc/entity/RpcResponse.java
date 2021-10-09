@@ -14,6 +14,12 @@ import java.io.Serializable;
 public class RpcResponse<T> implements Serializable {
 
     /**
+     * 响应对应的请求号
+     */
+    private String requestId;
+
+
+    /**
      * 响应状态码
      */
     private Integer statusCode;
@@ -30,15 +36,22 @@ public class RpcResponse<T> implements Serializable {
      */
     private T data;
 
-    public static <T> RpcResponse<T> success(T data) {
+    public RpcResponse() {
+
+    }
+
+    public static <T> RpcResponse<T> success(T data,String requestId) {
         RpcResponse<T> responce = new RpcResponse<>();
+        responce.setRequestId(requestId);
         responce.setStatusCode(ResponseCode.SUCCESS.getCode());
         responce.setData(data);
         return responce;
     }
 
-    public static <T> RpcResponse<T> fail(ResponseCode code) {
+    public static <T> RpcResponse<T> fail(ResponseCode code,String requestId) {
+
         RpcResponse<T> responce = new RpcResponse<>();
+        responce.setRequestId(requestId);
         responce.setStatusCode(code.getCode());
         responce.setMessage(code.getMessage());
         return responce;

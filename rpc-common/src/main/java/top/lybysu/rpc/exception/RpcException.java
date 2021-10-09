@@ -3,6 +3,8 @@ package top.lybysu.rpc.exception;
 import top.lybysu.rpc.enumeration.RpcError;
 
 /**
+ * RPC调用异常
+ *
  * @author xyt
  * @date 2021/10/3 8:20 下午
  */

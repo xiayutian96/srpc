@@ -1,8 +1,11 @@
-package top.lybysu.rpc.server;
+package top.lybysu.rpc.socket.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.lybysu.rpc.RequestHandler;
+import top.lybysu.rpc.RpcServe;
 import top.lybysu.rpc.registry.ServiceRegistry;
+import top.lybysu.rpc.serializer.CommonSerializer;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,9 +16,9 @@ import java.util.concurrent.*;
  * @author xyt
  * @date 2021/10/3 8:57 下午
  */
-public class RpcServer {
+public class SocketServer implements RpcServe {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
 
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 50;
@@ -24,15 +27,16 @@ public class RpcServer {
     private final ExecutorService threadPool;
     private RequestHandler requestHandler = new RequestHandler();
     private final ServiceRegistry serviceRegistry;
+    private CommonSerializer serializer;
 
-    public RpcServer(ServiceRegistry serviceRegistry) {
+    public SocketServer(ServiceRegistry serviceRegistry) {
 
         this.serviceRegistry = serviceRegistry;
         BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.SECONDS, workingQueue, threadFactory);
     }
-
+    @Override
     public void start(int port) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             logger.info("服务器启动...");
@@ -50,6 +54,10 @@ public class RpcServer {
 
 
 
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+        this.serializer = serializer;
+    }
 
 
 

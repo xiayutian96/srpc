@@ -1,7 +1,8 @@
-package top.lybysu.rpc.server;
+package top.lybysu.rpc.socket.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.lybysu.rpc.RequestHandler;
 import top.lybysu.rpc.entity.RpcRequest;
 import top.lybysu.rpc.entity.RpcResponse;
 import top.lybysu.rpc.registry.ServiceRegistry;
@@ -40,7 +41,7 @@ public class RequestHandlerThread implements Runnable {
             String interfaceName = rpcRequest.getInterfaceName();
             Object service = serviceRegistry.getService(interfaceName);
             Object result = requestHandler.handle(rpcRequest, service);
-            objectOutputStream.writeObject(RpcResponse.success(result));
+            objectOutputStream.writeObject(RpcResponse.success(result,rpcRequest.getRequestId()));
             objectOutputStream.flush();
         } catch (IOException | ClassNotFoundException e) {
             logger.error("调用或发送时有错误发生：", e);

@@ -17,15 +17,15 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultServiceRegistry.class);
 
-    private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
+    private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 
-    private final Set<String> registeredService = ConcurrentHashMap.newKeySet();
+    private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
 
 
 
     @Override
     public synchronized <T> void register(T service) {
-        //getCanonicalName():获取所传类从java语言规范定义的格式输出
+        //getCanonicalName()是获取所传类从java语言规范定义的格式输出
         String serviceName = service.getClass().getCanonicalName();
         if (registeredService.contains(serviceName)) {
             return;
@@ -43,6 +43,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public Object getService(String serviceName) {
+
+        logger.info(String.valueOf(serviceMap.size()));
+
         Object service = serviceMap.get(serviceName);
         if (service == null) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);
